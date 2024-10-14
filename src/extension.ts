@@ -20,12 +20,30 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello Data from vscode-manim!');
 	});
 
-	const disposable2 = vscode.commands.registerCommand('vscode-manim.checkpointPaste', () => {
+	const disposable2 = vscode.commands.registerCommand('vscode-manim.checkpointPaste', async () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-        terminal.sendText('checkpoint_paste()');
-		vscode.window.showInformationMessage('Copied code and sent to manim terminal');
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			// Get the selected text
+			const selection = editor.selection;
+			const selectedText = editor.document.getText(selection);
+
+			// Copy the selected text to the clipboard
+			await vscode.env.clipboard.writeText(selectedText);
+	
+			// Create or show the terminal
+			const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
+			
+			// Send the checkpoint_paste() command
+			// terminal.sendText('checkpoint_paste()', false);
+			terminal.sendText('checkpoint_paste()');
+	
+			vscode.window.showInformationMessage('Copied selected code and sent checkpoint_paste() to manim terminal');
+		} else {
+			vscode.window.showErrorMessage('No text is selected');
+		}
 	});
 
 	context.subscriptions.push(disposable1, disposable2);
