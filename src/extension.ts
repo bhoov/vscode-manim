@@ -30,6 +30,9 @@ export function activate(context: vscode.ExtensionContext) {
 			const selection = editor.selection;
 			const selectedText = editor.document.getText(selection);
 
+			// Save current clipboard to a buffer variable
+			const clipboardBuffer = await vscode.env.clipboard.readText();
+
 			// Copy the selected text to the clipboard
 			await vscode.env.clipboard.writeText(selectedText);
 	
@@ -39,6 +42,9 @@ export function activate(context: vscode.ExtensionContext) {
 			// Send the checkpoint_paste() command
 			// terminal.sendText('checkpoint_paste()', false);
 			terminal.sendText('checkpoint_paste()');
+
+			// Paste back the buffer variable into the clipboard
+			await vscode.env.clipboard.writeText(clipboardBuffer);
 	
 			vscode.window.showInformationMessage('Copied selected code and sent checkpoint_paste() to manim terminal');
 		} else {
