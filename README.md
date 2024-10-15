@@ -15,9 +15,12 @@ After installing:
 
 The resulting workflow looks like Grant's 🥳
 
+[(see demo on youtube)](https://www.youtube.com/watch?v=VaNHlFh0r5E)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/VaNHlFh0r5E?si=ClVdBSI1k_-mzKFr" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
-Recommended keyboard bindings:
+**Recommended keyboard bindings**:
 - `checkpoint_paste` :: `cmd+' cmd+r` 
 
 ## Todo
