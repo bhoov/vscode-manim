@@ -75,6 +75,9 @@ export function activate(context: vscode.ExtensionContext) {
 				'checkpoint_paste()'
 			);
 
+			// move 1 line down in the text editor (to get ready to execute next line)
+			await vscode.commands.executeCommand('cursorDown');
+
 			// Restore original clipboard content
 			await new Promise(resolve => setTimeout(resolve, 500));  // must wait a bit (so that checkpoint_paste() above doesn't capture the next clipboard)
 			await vscode.env.clipboard.writeText(clipboardBuffer);
