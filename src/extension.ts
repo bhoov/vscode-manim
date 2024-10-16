@@ -10,6 +10,9 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "vscode-manim" is now active!');
 
+
+
+
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
@@ -20,37 +23,62 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello Data from vscode-manim!');
 	});
 
-	const disposable2 = vscode.commands.registerCommand('vscode-manim.checkpointPaste', async () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-		const editor = vscode.window.activeTextEditor;
-		if (editor) {
-			// Get the selected text
-			const selection = editor.selection;
-			const selectedText = editor.document.getText(selection);
 
-			// Save current clipboard to a buffer variable
-			const clipboardBuffer = await vscode.env.clipboard.readText();
 
-			// Copy the selected text to the clipboard
-			await vscode.env.clipboard.writeText(selectedText);
-	
-			// Create or show the terminal
-			const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-			
-			// Send the checkpoint_paste() command
-			// terminal.sendText('checkpoint_paste()', false);
-			terminal.sendText('checkpoint_paste()');
 
-			// Paste back the buffer variable into the clipboard
-			await vscode.env.clipboard.writeText(clipboardBuffer);
-	
-			vscode.window.showInformationMessage('Copied selected code and sent checkpoint_paste() to manim terminal');
-		} else {
-			vscode.window.showErrorMessage('No text is selected');
-		}
-	});
+    let isExecuting = false;  // Flag: to prevent several commands executing at the same time (because clipboard saving would become uncontrollable in this case)
+    const disposable2 = vscode.commands.registerCommand('vscode-manim.checkpointPaste', async () => {
+        if (isExecuting) {
+            vscode.window.showInformationMessage('Please wait until the current command finishes executing.');
+            return;
+        }
+
+        isExecuting = true;
+        try {
+			// Editor must be found:
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                vscode.window.showErrorMessage('Editor not found');
+                return;
+            }
+			// If nothing is selected - select the whole line:
+			let selectedText = editor.document.getText(editor.selection);
+			if (editor.selection.isEmpty) {
+				const line = editor.document.lineAt(editor.selection.start.line);
+				selectedText = editor.document.getText(line.range);
+			}
+			// Selected text can't be empty:
+			if (!selectedText) {
+				vscode.window.showErrorMessage('No text selected in the editor');
+				return;
+			}
+
+            // Save current clipboard content
+            const clipboardBuffer = await vscode.env.clipboard.readText();
+
+            // Copy the selected text to the clipboard
+            await vscode.env.clipboard.writeText(selectedText);
+
+            // Create or show the terminal
+            const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
+
+            // Send the checkpoint_paste() command
+            terminal.sendText(
+				'\x0C' +  // to center the terminal (Command + l)
+				'checkpoint_paste()'
+			);
+
+            // Restore original clipboard content
+			await new Promise(resolve => setTimeout(resolve, 500));  // must wait a bit (so that checkpoint_paste() above doesn't capture the next clipboard)
+            await vscode.env.clipboard.writeText(clipboardBuffer);
+
+        } catch (error) {
+            vscode.window.showErrorMessage(`Error: ${error}`);
+        } finally {
+            isExecuting = false;
+        }
+    });
+
 
 	context.subscriptions.push(disposable1, disposable2);
 }
