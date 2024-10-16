@@ -19,28 +19,28 @@ export function activate(context: vscode.ExtensionContext) {
 	const disposable1 = vscode.commands.registerCommand('vscode-manim.helloData', () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
-        // terminal.show();
+		// terminal.show();
 		vscode.window.showInformationMessage('Hello Data from vscode-manim!');
 	});
 
 
 
 
-    let isExecuting = false;  // Flag: to prevent several commands executing at the same time (because clipboard saving would become uncontrollable in this case)
-    const disposable2 = vscode.commands.registerCommand('vscode-manim.checkpointPaste', async () => {
-        if (isExecuting) {
-            vscode.window.showInformationMessage('Please wait until the current command finishes executing.');
-            return;
-        }
+	let isExecuting = false;  // Flag: to prevent several commands executing at the same time (because clipboard saving would become uncontrollable in this case)
+	const disposable2 = vscode.commands.registerCommand('vscode-manim.checkpointPaste', async () => {
+		if (isExecuting) {
+			vscode.window.showInformationMessage('Please wait until the current command finishes executing.');
+			return;
+		}
 
-        isExecuting = true;
-        try {
+		isExecuting = true;
+		try {
 			// Editor must be found:
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) {
-                vscode.window.showErrorMessage('Editor not found');
-                return;
-            }
+			const editor = vscode.window.activeTextEditor;
+			if (!editor) {
+				vscode.window.showErrorMessage('Editor not found');
+				return;
+			}
 			// If nothing is selected - select the whole line:
 			let selectedText = editor.document.getText(editor.selection);
 			if (editor.selection.isEmpty) {
@@ -53,31 +53,31 @@ export function activate(context: vscode.ExtensionContext) {
 				return;
 			}
 
-            // Save current clipboard content
-            const clipboardBuffer = await vscode.env.clipboard.readText();
+			// Save current clipboard content
+			const clipboardBuffer = await vscode.env.clipboard.readText();
 
-            // Copy the selected text to the clipboard
-            await vscode.env.clipboard.writeText(selectedText);
+			// Copy the selected text to the clipboard
+			await vscode.env.clipboard.writeText(selectedText);
 
-            // Create or show the terminal
-            const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
+			// Create or show the terminal
+			const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
 
-            // Send the checkpoint_paste() command
-            terminal.sendText(
+			// Send the checkpoint_paste() command
+			terminal.sendText(
 				'\x0C' +  // to center the terminal (Command + l)
 				'checkpoint_paste()'
 			);
 
-            // Restore original clipboard content
+			// Restore original clipboard content
 			await new Promise(resolve => setTimeout(resolve, 500));  // must wait a bit (so that checkpoint_paste() above doesn't capture the next clipboard)
-            await vscode.env.clipboard.writeText(clipboardBuffer);
+			await vscode.env.clipboard.writeText(clipboardBuffer);
 
-        } catch (error) {
-            vscode.window.showErrorMessage(`Error: ${error}`);
-        } finally {
-            isExecuting = false;
-        }
-    });
+		} catch (error) {
+			vscode.window.showErrorMessage(`Error: ${error}`);
+		} finally {
+			isExecuting = false;
+		}
+	});
 
 
 	context.subscriptions.push(disposable1, disposable2);
