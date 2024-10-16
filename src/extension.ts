@@ -41,13 +41,20 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showErrorMessage('Editor not found');
 				return;
 			}
-			// If nothing is selected - select the whole line:
-			let selectedText = editor.document.getText(editor.selection);
+			let selectedText;
 			if (editor.selection.isEmpty) {
+				// If nothing is selected - select the whole line (for convenience):
 				const line = editor.document.lineAt(editor.selection.start.line);
 				selectedText = editor.document.getText(line.range);
+			} else {
+				// If selected - extend selection to start and end of lines (for convenience):
+				const range = new vscode.Range(
+					editor.selection.start.with(undefined, 0),
+					editor.selection.end.with(undefined, Number.MAX_SAFE_INTEGER)
+				);
+				selectedText = editor.document.getText(range);
 			}
-			// Selected text can't be empty:
+			// Selected text must not be empty:
 			if (!selectedText) {
 				vscode.window.showErrorMessage('No text selected in the editor');
 				return;
