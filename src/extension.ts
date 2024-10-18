@@ -71,13 +71,6 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}, null, context.subscriptions);
 
-	vscode.window.onDidChangeTextEditorVisibleRanges(event => {
-		const editor = event.textEditor;
-		if (editor) {
-			manimCell.applyCellDecorations(editor);
-		}
-	}, null, context.subscriptions);
-
 	if (vscode.window.activeTextEditor) {
 		manimCell.applyCellDecorations(vscode.window.activeTextEditor);
 	}
