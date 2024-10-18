@@ -2,6 +2,15 @@ import * as vscode from 'vscode';
 
 export class ManimCellRanges {
 
+    /**
+     * Regular expression to match the start of a Manim cell.
+     * 
+     * The marker is a comment line starting with "##". Since the comment might
+     * be indented, we allow for any number of leading whitespaces.
+     * 
+     * Manim cells themselves might contain further comments, but no nested
+     * Manim cells, i.e. no further comment starting with "##".
+     */
     private static readonly MARKER = /^(\s*##)/;
 
     /**
@@ -23,7 +32,6 @@ export class ManimCellRanges {
 
         for (let i = 0; i < document.lineCount; i++) {
             const line = document.lineAt(i);
-
             if (line.isEmptyOrWhitespace) {
                 continue;
             }
@@ -43,6 +51,7 @@ export class ManimCellRanges {
             }
         }
 
+        // Range for the last cell when the document ends
         if (start !== null) {
             ranges.push(this.constructNewRange(start, document.lineCount - 1, document));
         }
