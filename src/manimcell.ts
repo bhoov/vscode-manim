@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangeProvider {
-    private static readonly MARKER = /^(##)/;
+    private static readonly MARKER = /^(\s*##)/;
 
     constructor() { }
 
@@ -21,7 +21,7 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
 
     public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): vscode.CodeLens {
         codeLens.command = {
-            title: "Python Cell",
+            title: "Preview Manim",
             command: "vscode-manim.previewManimCell",
             arguments: []
         };
