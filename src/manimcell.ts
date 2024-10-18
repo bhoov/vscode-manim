@@ -5,17 +5,22 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
     private static readonly MARKER = /^(\s*##)/;
     private cellTopDecoration: vscode.TextEditorDecorationType;
     private cellBottomDecoration: vscode.TextEditorDecorationType;
+    private cellTopDecorationUnfocused: vscode.TextEditorDecorationType;
+    private cellBottomDecorationUnfocused: vscode.TextEditorDecorationType;
 
     constructor() {
-        this.cellTopDecoration = window.createTextEditorDecorationType({
-            borderColor: new vscode.ThemeColor('interactive.activeCodeBorder'),
-            borderWidth: '1.5px 0px 0px 0px',
-            borderStyle: 'solid',
-            isWholeLine: true
-        });
-        this.cellBottomDecoration = window.createTextEditorDecorationType({
-            borderColor: new vscode.ThemeColor('interactive.activeCodeBorder'),
-            borderWidth: '0px 0px 1.5px 0px',
+        this.cellTopDecoration = ManimCell.getBorder(true, true);
+        this.cellBottomDecoration = ManimCell.getBorder(true, false);
+        this.cellTopDecorationUnfocused = ManimCell.getBorder(false, true);
+        this.cellBottomDecorationUnfocused = ManimCell.getBorder(false, false);
+    }
+
+    private static getBorder(isFocused = true, isTop = true): vscode.TextEditorDecorationType {
+        const borderColor = isFocused ? 'interactive.activeCodeBorder' : 'interactive.inactiveCodeBorder';
+        const borderWidth = isTop ? '1.5px 0px 0px 0px' : '0px 0px 1.5px 0px';
+        return window.createTextEditorDecorationType({
+            borderColor: new vscode.ThemeColor(borderColor),
+            borderWidth: borderWidth,
             borderStyle: 'solid',
             isWholeLine: true
         });
@@ -52,16 +57,31 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
     public applyCellDecorations(editor: vscode.TextEditor) {
         const document = editor.document;
         const ranges = this.calculateCellRanges(document);
-        const topRanges: vscode.Range[] = [];
-        const bottomRanges: vscode.Range[] = [];
+        const topRangesFocused: vscode.Range[] = [];
+        const bottomRangesFocused: vscode.Range[] = [];
+        const topRangesUnfocused: vscode.Range[] = [];
+        const bottomRangesUnfocused: vscode.Range[] = [];
+
+        const cursorPosition = editor.selection.active;
 
         ranges.forEach(range => {
-            topRanges.push(new vscode.Range(range.start.line, 0, range.start.line, 0));
-            bottomRanges.push(new vscode.Range(range.end.line, 0, range.end.line, 0));
+            const isCursorInRange = range.contains(cursorPosition);
+            const topRange = new vscode.Range(range.start.line, 0, range.start.line, 0);
+            const bottomRange = new vscode.Range(range.end.line, 0, range.end.line, 0);
+
+            if (isCursorInRange) {
+                topRangesFocused.push(topRange);
+                bottomRangesFocused.push(bottomRange);
+            } else {
+                topRangesUnfocused.push(topRange);
+                bottomRangesUnfocused.push(bottomRange);
+            }
         });
 
-        editor.setDecorations(this.cellTopDecoration, topRanges);
-        editor.setDecorations(this.cellBottomDecoration, bottomRanges);
+        editor.setDecorations(this.cellTopDecoration, topRangesFocused);
+        editor.setDecorations(this.cellBottomDecoration, bottomRangesFocused);
+        editor.setDecorations(this.cellTopDecorationUnfocused, topRangesUnfocused);
+        editor.setDecorations(this.cellBottomDecorationUnfocused, bottomRangesUnfocused);
     }
 
     private calculateCellRanges(document: vscode.TextDocument): vscode.Range[] {

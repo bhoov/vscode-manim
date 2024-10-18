@@ -71,6 +71,10 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}, null, context.subscriptions);
 
+	vscode.window.onDidChangeTextEditorSelection(event => {
+		manimCell.applyCellDecorations(event.textEditor);
+	}, null, context.subscriptions);
+
 	if (vscode.window.activeTextEditor) {
 		manimCell.applyCellDecorations(vscode.window.activeTextEditor);
 	}
