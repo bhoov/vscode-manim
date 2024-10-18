@@ -13,30 +13,32 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "vscode-manim" is now active!');
 
-	const previewManimViaCell = vscode.commands.registerCommand('vscode-manim.previewManimCell', (cellCode: string | undefined) => {
-		// User has executed the command via command pallette
-		if (cellCode === undefined) {
-			const editor = vscode.window.activeTextEditor;
-			if (!editor) {
-				vscode.window.showErrorMessage('No opened file found. Place your cursor in a Manim cell.');
-				return;
+	const previewManimViaCell = vscode.commands.registerCommand('vscode-manim.previewManimCell',
+		(cellCode: string | undefined) => {
+			// User has executed the command via command pallette
+			if (cellCode === undefined) {
+				const editor = vscode.window.activeTextEditor;
+				if (!editor) {
+					vscode.window.showErrorMessage('No opened file found. Place your cursor in a Manim cell.');
+					return;
+				}
+				const document = editor.document;
+				
+				// Get the code of the cell where the cursor is placed
+				const cursorLine = editor.selection.active.line;
+				const range = ManimCellRanges.getCellRangeAtLine(document, cursorLine);
+				if (!range) {
+					vscode.window.showErrorMessage('Place your cursor in a Manim cell.');
+					return;
+				}
+				cellCode = document.getText(range);
 			}
-			const document = editor.document;
 
-			const cursorLine = editor.selection.active.line;
-			const range = ManimCellRanges.getCellRangeAtLine(document, cursorLine);
-			if (!range) {
-				vscode.window.showErrorMessage('Place your cursor in a Manim cell.');
-				return;
+			const succeeded = previewCode(cellCode);
+			if (!succeeded) {
+				vscode.window.showErrorMessage('Failed to preview Manim code. Take a look at the logs.');
 			}
-			cellCode = document.getText(range);
-		}
-
-		const succeeded = previewCode(cellCode);
-		if (!succeeded) {
-			vscode.window.showErrorMessage('Failed to preview Manim code. Take a look at the logs.');
-		}
-	});
+		});
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
@@ -75,10 +77,19 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(disposable1, disposable2, previewManimViaCell);
+	registerManimCellProviders(context);
+}
 
+/**
+ * Registers the Manim cell "providers", e.g. code lenses and folding ranges.
+ */
+function registerManimCellProviders(context: vscode.ExtensionContext) {
 	const manimCell = new ManimCell();
-	const codeLensProvider = vscode.languages.registerCodeLensProvider({ language: 'python' }, manimCell);
-	const foldingRangeProvider = vscode.languages.registerFoldingRangeProvider({ language: 'python' }, manimCell);
+
+	const codeLensProvider = vscode.languages.registerCodeLensProvider(
+		{ language: 'python' }, manimCell);
+	const foldingRangeProvider = vscode.languages.registerFoldingRangeProvider(
+		{ language: 'python' }, manimCell);
 	context.subscriptions.push(codeLensProvider, foldingRangeProvider);
 
 	vscode.window.onDidChangeActiveTextEditor(editor => {
