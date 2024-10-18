@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { window } from 'vscode';
+import { CellRangeHandler } from './cellRangeHandler';
 
 export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangeProvider {
-    private static readonly MARKER = /^(\s*##)/;
     private cellTopDecoration: vscode.TextEditorDecorationType;
     private cellBottomDecoration: vscode.TextEditorDecorationType;
     private cellTopDecorationUnfocused: vscode.TextEditorDecorationType;
@@ -29,7 +29,7 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
     public provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] {
         const codeLenses: vscode.CodeLens[] = [];
 
-        const ranges = this.calculateCellRanges(document);
+        const ranges = CellRangeHandler.calculateCellRanges(document);
         for (const range of ranges) {
             codeLenses.push(new vscode.CodeLens(range));
         }
@@ -57,13 +57,13 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
     }
 
     public provideFoldingRanges(document: vscode.TextDocument, context: vscode.FoldingContext, token: vscode.CancellationToken): vscode.FoldingRange[] {
-        const ranges = this.calculateCellRanges(document);
+        const ranges = CellRangeHandler.calculateCellRanges(document);
         return ranges.map(range => new vscode.FoldingRange(range.start.line, range.end.line));
     }
 
     public applyCellDecorations(editor: vscode.TextEditor) {
         const document = editor.document;
-        const ranges = this.calculateCellRanges(document);
+        const ranges = CellRangeHandler.calculateCellRanges(document);
         const topRangesFocused: vscode.Range[] = [];
         const bottomRangesFocused: vscode.Range[] = [];
         const topRangesUnfocused: vscode.Range[] = [];
@@ -90,47 +90,5 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
         editor.setDecorations(this.cellTopDecorationUnfocused, topRangesUnfocused);
         editor.setDecorations(this.cellBottomDecorationUnfocused, bottomRangesUnfocused);
     }
-
-    private calculateCellRanges(document: vscode.TextDocument): vscode.Range[] {
-        const ranges: vscode.Range[] = [];
-        let start: number | null = null;
-        let startIndent: number | null = null;
-
-        for (let i = 0; i < document.lineCount; i++) {
-            const line = document.lineAt(i);
-
-            if (line.isEmptyOrWhitespace) {
-                continue;
-            }
-
-            const currentIndent = line.firstNonWhitespaceCharacterIndex;
-
-            if (ManimCell.MARKER.test(line.text)) {
-                if (start !== null) {
-                    ranges.push(this.constructNewRange(start, i - 1, document));
-                }
-                start = i;
-                startIndent = currentIndent;
-            } else if (start !== null && startIndent !== null && startIndent > currentIndent) {
-                ranges.push(this.constructNewRange(start, i - 1, document));
-                start = null;
-                startIndent = null;
-            }
-        }
-
-        if (start !== null) {
-            ranges.push(this.constructNewRange(start, document.lineCount - 1, document));
-        }
-
-        return ranges;
-    }
-
-    private constructNewRange(start: number, end: number, document: vscode.TextDocument): vscode.Range {
-        let endLine = document.lineAt(end);
-        const endNew = endLine.isEmptyOrWhitespace ? end - 1 : end;
-        if (endNew !== end) {
-            endLine = document.lineAt(endNew);
-        }
-        return new vscode.Range(start, 0, endNew, endLine.text.length);
-    }
+    
 }
