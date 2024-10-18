@@ -11,8 +11,17 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "vscode-manim" is now active!');
 
-	const previewManimViaCell = vscode.commands.registerCommand('vscode-manim.previewManimCell', () => {
-		vscode.window.showInformationMessage('Previewing Manim cell (TODO)');
+	const previewManimViaCell = vscode.commands.registerCommand('vscode-manim.previewManimCell', (cellCode: string) => {
+		vscode.window.showInformationMessage(`Previewing Manim code: ${cellCode}`);
+
+		// TODO: preview Manim code via `checkpoint_paste()`.
+		// Here instead some funny dummy implementation.
+		const lines = cellCode.split('\n');
+		for (const line of lines) {
+			if (line.trim().startsWith('#')) {
+				vscode.window.showInformationMessage(`Got a comment: ${line}`);
+			}
+		}
 	});
 
 	// The command has been defined in the package.json file
