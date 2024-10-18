@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import {window} from 'vscode';
+import { window } from 'vscode';
 
 export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangeProvider {
     private static readonly MARKER = /^(\s*##)/;
@@ -71,25 +71,39 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
 
         for (let i = 0; i < document.lineCount; i++) {
             const line = document.lineAt(i);
+
+            if (line.isEmptyOrWhitespace) {
+                continue;
+            }
+
             const currentIndent = line.firstNonWhitespaceCharacterIndex;
 
             if (ManimCell.MARKER.test(line.text)) {
                 if (start !== null) {
-                    ranges.push(new vscode.Range(start, 0, i - 1, document.lineAt(i - 1).text.length));
+                    ranges.push(this.constructNewRange(start, i - 1, document));
                 }
                 start = i;
                 startIndent = currentIndent;
             } else if (start !== null && startIndent !== null && startIndent !== currentIndent) {
-                ranges.push(new vscode.Range(start, 0, i - 1, document.lineAt(i - 1).text.length));
+                ranges.push(this.constructNewRange(start, i - 1, document));
                 start = null;
                 startIndent = null;
             }
         }
 
         if (start !== null) {
-            ranges.push(new vscode.Range(start, 0, document.lineCount - 1, document.lineAt(document.lineCount - 1).text.length));
+            ranges.push(this.constructNewRange(start, document.lineCount - 1, document));
         }
 
         return ranges;
+    }
+
+    private constructNewRange(start: number, end: number, document: vscode.TextDocument): vscode.Range {
+        let endLine = document.lineAt(end);
+        const endNew = endLine.isEmptyOrWhitespace ? end - 1 : end;
+        if (endNew !== end) {
+            endLine = document.lineAt(endNew);
+        }
+        return new vscode.Range(start, 0, endNew, endLine.text.length);
     }
 }
