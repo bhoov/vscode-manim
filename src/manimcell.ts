@@ -104,7 +104,7 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
                 }
                 start = i;
                 startIndent = currentIndent;
-            } else if (start !== null && startIndent !== null && startIndent !== currentIndent) {
+            } else if (start !== null && startIndent !== null && startIndent > currentIndent) {
                 ranges.push(this.constructNewRange(start, i - 1, document));
                 start = null;
                 startIndent = null;
