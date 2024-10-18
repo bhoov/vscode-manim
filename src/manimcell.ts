@@ -50,14 +50,17 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
     }
 
     public applyCellDecorations(editor: vscode.TextEditor) {
-        const document = editor.document;
-        const ranges = this.calculateCellRanges(document);
+        const ranges = this.calculateCellRanges(editor.document);
         const topRanges: vscode.Range[] = [];
         const bottomRanges: vscode.Range[] = [];
 
+        const visibleRanges = editor.visibleRanges;
         ranges.forEach(range => {
-            topRanges.push(new vscode.Range(range.start.line, 0, range.start.line, 0));
-            bottomRanges.push(new vscode.Range(range.end.line, 0, range.end.line, 0));
+            const isEndLineVisible = visibleRanges.some(visibleRange => visibleRange.contains(range.end));
+            if (isEndLineVisible) {
+                topRanges.push(new vscode.Range(range.start.line, 0, range.start.line, 0));
+                bottomRanges.push(new vscode.Range(range.end.line, 0, range.end.line, 0));
+            }
         });
 
         editor.setDecorations(this.cellTopDecoration, topRanges);
