@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { ManimCell } from './manimcell';
+import { CellRangeHandler } from './cellRangeHandler';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -14,8 +15,22 @@ export function activate(context: vscode.ExtensionContext) {
 	const previewManimViaCell = vscode.commands.registerCommand('vscode-manim.previewManimCell', (cellCode: string | undefined) => {
 		// User has executed the command via command pallette
 		if (cellCode === undefined) {
-			vscode.window.showWarningMessage("Not implemented yet");
-			return;
+			// get active document
+			const editor = vscode.window.activeTextEditor;
+			if (!editor) {
+				vscode.window.showErrorMessage('No active editor found');
+				return;
+			}
+			const document = editor.document;
+
+			// Extract cell code from cursor line
+			const cursorLine = editor.selection.active.line;
+			const range = CellRangeHandler.getCellRangeAtLine(document, cursorLine);
+			if (!range) {
+				vscode.window.showErrorMessage('No code found at cursor position');
+				return;
+			}
+			cellCode = CellRangeHandler.getCellCode(document, range.start.line, range.end.line);
 		}
 
 		// TODO: preview Manim code via `checkpoint_paste()`.

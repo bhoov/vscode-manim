@@ -43,9 +43,8 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
         }
 
         const document = vscode.window.activeTextEditor?.document;
-        const startLine = codeLens.range.start.line;
-        const endLine = codeLens.range.end.line;
-        const cellCode = document.getText(new vscode.Range(startLine, 0, endLine, document.lineAt(endLine).text.length));
+        const cellCode = CellRangeHandler.getCellCode(document,
+            codeLens.range.start.line, codeLens.range.end.line);
 
         codeLens.command = {
             title: "Preview Manim",
@@ -90,5 +89,5 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
         editor.setDecorations(this.cellTopDecorationUnfocused, topRangesUnfocused);
         editor.setDecorations(this.cellBottomDecorationUnfocused, bottomRangesUnfocused);
     }
-    
+
 }
