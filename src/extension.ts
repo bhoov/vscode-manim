@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
 			const cursorLine = editor.selection.active.line;
 			const range = CellRangeHandler.getCellRangeAtLine(document, cursorLine);
 			if (!range) {
-				vscode.window.showErrorMessage('No code found. Place your cursor in a Manim cell.');
+				vscode.window.showErrorMessage('Place your cursor in a Manim cell.');
 				return;
 			}
 			cellCode = document.getText(range);
