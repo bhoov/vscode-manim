@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "vscode-manim" is now active!');
 
-	const previewManimViaCell = vscode.commands.registerCommand('vscode-manim.previewManimCell',
+	const previewManimCell = vscode.commands.registerCommand('vscode-manim.previewManimCell',
 		(cellCode: string | undefined) => {
 			// User has executed the command via command pallette
 			if (cellCode === undefined) {
@@ -76,7 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	context.subscriptions.push(disposable1, disposable2, previewManimViaCell);
+	context.subscriptions.push(disposable1, disposable2, previewManimCell);
 	registerManimCellProviders(context);
 }
 
