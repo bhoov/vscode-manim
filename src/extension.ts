@@ -58,6 +58,22 @@ export function activate(context: vscode.ExtensionContext) {
 	const foldingRangeProvider = vscode.languages.registerFoldingRangeProvider({ language: 'python' }, manimCell);
 	context.subscriptions.push(codeLensProvider, foldingRangeProvider);
 
+	vscode.window.onDidChangeActiveTextEditor(editor => {
+		if (editor) {
+			manimCell.applyCellDecorations(editor);
+		}
+	}, null, context.subscriptions);
+
+	vscode.workspace.onDidChangeTextDocument(event => {
+		const editor = vscode.window.activeTextEditor;
+		if (editor && event.document === editor.document) {
+			manimCell.applyCellDecorations(editor);
+		}
+	}, null, context.subscriptions);
+
+	if (vscode.window.activeTextEditor) {
+		manimCell.applyCellDecorations(vscode.window.activeTextEditor);
+	}
 }
 
 // This method is called when your extension is deactivated
