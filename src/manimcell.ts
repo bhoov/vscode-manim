@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export class CodeWatcher implements vscode.CodeLensProvider, vscode.FoldingRangeProvider {
+export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangeProvider {
     private static readonly MARKER = /^(##)/;
 
     constructor() { }
@@ -10,7 +10,7 @@ export class CodeWatcher implements vscode.CodeLensProvider, vscode.FoldingRange
 
         for (let i = 0; i < document.lineCount; i++) {
             const line = document.lineAt(i);
-            if (CodeWatcher.MARKER.test(line.text)) {
+            if (ManimCell.MARKER.test(line.text)) {
                 const range = new vscode.Range(i, 0, i, line.text.length);
                 codeLenses.push(new vscode.CodeLens(range));
             }
@@ -34,7 +34,7 @@ export class CodeWatcher implements vscode.CodeLensProvider, vscode.FoldingRange
 
         for (let i = 0; i < document.lineCount; i++) {
             const line = document.lineAt(i);
-            if (CodeWatcher.MARKER.test(line.text)) {
+            if (ManimCell.MARKER.test(line.text)) {
                 if (start !== null) {
                     foldingRanges.push(new vscode.FoldingRange(start, i - 1));
                 }

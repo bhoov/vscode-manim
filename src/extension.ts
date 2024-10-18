@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { CodeWatcher } from './codewatcher';
+import { ManimCell } from './manimcell';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -53,9 +53,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable1, disposable2, previewManimViaCell);
 
-	const codeWatcher = new CodeWatcher();
-	const codeLensProvider = vscode.languages.registerCodeLensProvider({ language: 'python' }, codeWatcher);
-	const foldingRangeProvider = vscode.languages.registerFoldingRangeProvider({ language: 'python' }, codeWatcher);
+	const manimCell = new ManimCell();
+	const codeLensProvider = vscode.languages.registerCodeLensProvider({ language: 'python' }, manimCell);
+	const foldingRangeProvider = vscode.languages.registerFoldingRangeProvider({ language: 'python' }, manimCell);
 	context.subscriptions.push(codeLensProvider, foldingRangeProvider);
 
 }
