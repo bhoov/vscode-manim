@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export class CodeWatcher implements vscode.CodeLensProvider {
+export class CodeWatcher implements vscode.CodeLensProvider, vscode.FoldingRangeProvider {
     private static readonly PYTHON_CELL_MARKER = /^(##)/;
 
     constructor() { }
@@ -27,5 +27,27 @@ export class CodeWatcher implements vscode.CodeLensProvider {
             arguments: []
         };
         return codeLens;
+    }
+
+    public provideFoldingRanges(document: vscode.TextDocument, context: vscode.FoldingContext, token: vscode.CancellationToken): vscode.FoldingRange[] {
+        const foldingRanges: vscode.FoldingRange[] = [];
+        const regex = CodeWatcher.PYTHON_CELL_MARKER;
+        let start: number | null = null;
+
+        for (let i = 0; i < document.lineCount; i++) {
+            const line = document.lineAt(i);
+            if (regex.test(line.text)) {
+                if (start !== null) {
+                    foldingRanges.push(new vscode.FoldingRange(start, i - 1));
+                }
+                start = i;
+            }
+        }
+
+        if (start !== null) {
+            foldingRanges.push(new vscode.FoldingRange(start, document.lineCount - 1));
+        }
+
+        return foldingRanges;
     }
 }

@@ -11,9 +11,6 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "vscode-manim" is now active!');
 
-	const codeWatcher = new CodeWatcher();
-	const codeLensProvider = vscode.languages.registerCodeLensProvider({ language: 'python' }, codeWatcher);
-
 	const previewManimViaCell = vscode.commands.registerCommand('vscode-manim.previewManimCell', () => {
 		vscode.window.showInformationMessage('Previewing Manim cell (TODO)');
 	});
@@ -24,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const disposable1 = vscode.commands.registerCommand('vscode-manim.helloData', () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
-        // terminal.show();
+		// terminal.show();
 		vscode.window.showInformationMessage('Hello Data from vscode-manim!');
 	});
 
@@ -40,22 +37,28 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// Copy the selected text to the clipboard
 			await vscode.env.clipboard.writeText(selectedText);
-	
+
 			// Create or show the terminal
 			const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-			
+
 			// Send the checkpoint_paste() command
 			// terminal.sendText('checkpoint_paste()', false);
 			terminal.sendText('checkpoint_paste()');
-	
+
 			vscode.window.showInformationMessage('Copied selected code and sent checkpoint_paste() to manim terminal');
 		} else {
 			vscode.window.showErrorMessage('No text is selected');
 		}
 	});
 
-	context.subscriptions.push(disposable1, disposable2, previewManimViaCell, codeLensProvider);
+	context.subscriptions.push(disposable1, disposable2, previewManimViaCell);
+
+	const codeWatcher = new CodeWatcher();
+	const codeLensProvider = vscode.languages.registerCodeLensProvider({ language: 'python' }, codeWatcher);
+	const foldingRangeProvider = vscode.languages.registerFoldingRangeProvider({ language: 'python' }, codeWatcher);
+	context.subscriptions.push(codeLensProvider, foldingRangeProvider);
+
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
