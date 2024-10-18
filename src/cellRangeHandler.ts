@@ -4,6 +4,18 @@ export class CellRangeHandler {
 
     private static readonly MARKER = /^(\s*##)/;
 
+    /**
+     * Calculates the ranges of Manim cells in the given document.
+     * 
+     * A new Manim cell starts at a custom MARKER. The cell ends either:
+     * - when the next line starts with the MARKER
+     * - when the indentation level decreases
+     * - at the end of the document
+     * 
+     * This method is performance-intensive as it has to go through every single
+     * line of the document. Despite this, we call it many times and caching
+     * could be beneficial in the future.
+     */
     public static calculateCellRanges(document: vscode.TextDocument): vscode.Range[] {
         const ranges: vscode.Range[] = [];
         let start: number | null = null;
@@ -38,6 +50,12 @@ export class CellRangeHandler {
         return ranges;
     }
 
+    /**
+     * Returns the cell range that contains the given line number.
+     * 
+     * Returns null if no cell range contains the line, e.g. if the cursor is
+     * outside of a Manim cell.
+     */
     public static getCellRangeAtLine(document: vscode.TextDocument, line: number): vscode.Range | null {
         const ranges = CellRangeHandler.calculateCellRanges(document);
         for (const range of ranges) {
@@ -48,6 +66,10 @@ export class CellRangeHandler {
         return null;
     }
 
+    /**
+     * Constructs a new cell range from the given start and end line numbers.
+     * Discards a possible empty line at the end of the range.
+     */
     private static constructNewRange(start: number, end: number,
         document: vscode.TextDocument): vscode.Range {
         let endLine = document.lineAt(end);
