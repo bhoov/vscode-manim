@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { ManimCell } from './manimcell';
 import { CellRangeHandler } from './cellRangeHandler';
+import { previewCode } from './previewCode';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -15,33 +16,23 @@ export function activate(context: vscode.ExtensionContext) {
 	const previewManimViaCell = vscode.commands.registerCommand('vscode-manim.previewManimCell', (cellCode: string | undefined) => {
 		// User has executed the command via command pallette
 		if (cellCode === undefined) {
-			// get active document
 			const editor = vscode.window.activeTextEditor;
 			if (!editor) {
-				vscode.window.showErrorMessage('No active editor found');
+				vscode.window.showErrorMessage('No opened file found. Place your cursor in a Manim cell.');
 				return;
 			}
 			const document = editor.document;
 
-			// Extract cell code from cursor line
 			const cursorLine = editor.selection.active.line;
 			const range = CellRangeHandler.getCellRangeAtLine(document, cursorLine);
 			if (!range) {
-				vscode.window.showErrorMessage('No code found at cursor position');
+				vscode.window.showErrorMessage('No code found. Place your cursor in a Manim cell.');
 				return;
 			}
-			cellCode = CellRangeHandler.getCellCode(document, range.start.line, range.end.line);
+			cellCode = document.getText(range);
 		}
 
-		// TODO: preview Manim code via `checkpoint_paste()`.
-		// Here instead some funny dummy implementation.
-		vscode.window.showInformationMessage(`Previewing Manim code: ${cellCode}`);
-		const lines = cellCode.split('\n');
-		for (const line of lines) {
-			if (line.trim().startsWith('#')) {
-				vscode.window.showInformationMessage(`Got a comment: ${line}`);
-			}
-		}
+		const succeeded = previewCode(cellCode);
 	});
 
 	// The command has been defined in the package.json file

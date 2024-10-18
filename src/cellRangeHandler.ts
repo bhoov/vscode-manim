@@ -38,10 +38,6 @@ export class CellRangeHandler {
         return ranges;
     }
 
-    public static getCellCode(document: vscode.TextDocument, startLine: number, endLine: number): string {
-        return document.getText(new vscode.Range(startLine, 0, endLine, document.lineAt(endLine).text.length));
-    }
-
     public static getCellRangeAtLine(document: vscode.TextDocument, line: number): vscode.Range | null {
         const ranges = CellRangeHandler.calculateCellRanges(document);
         for (const range of ranges) {
