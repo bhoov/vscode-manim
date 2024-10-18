@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { window } from 'vscode';
-import { CellRangeHandler } from './cellRangeHandler';
+import { ManimCellRanges } from './manimCellRanges';
 
 export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangeProvider {
     private cellTopDecoration: vscode.TextEditorDecorationType;
@@ -29,7 +29,7 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
     public provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] {
         const codeLenses: vscode.CodeLens[] = [];
 
-        const ranges = CellRangeHandler.calculateCellRanges(document);
+        const ranges = ManimCellRanges.calculateRanges(document);
         for (const range of ranges) {
             codeLenses.push(new vscode.CodeLens(range));
         }
@@ -56,13 +56,13 @@ export class ManimCell implements vscode.CodeLensProvider, vscode.FoldingRangePr
     }
 
     public provideFoldingRanges(document: vscode.TextDocument, context: vscode.FoldingContext, token: vscode.CancellationToken): vscode.FoldingRange[] {
-        const ranges = CellRangeHandler.calculateCellRanges(document);
+        const ranges = ManimCellRanges.calculateRanges(document);
         return ranges.map(range => new vscode.FoldingRange(range.start.line, range.end.line));
     }
 
     public applyCellDecorations(editor: vscode.TextEditor) {
         const document = editor.document;
-        const ranges = CellRangeHandler.calculateCellRanges(document);
+        const ranges = ManimCellRanges.calculateRanges(document);
         const topRangesFocused: vscode.Range[] = [];
         const bottomRangesFocused: vscode.Range[] = [];
         const topRangesUnfocused: vscode.Range[] = [];

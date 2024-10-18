@@ -1,8 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { ManimCell } from './manimcell';
-import { CellRangeHandler } from './cellRangeHandler';
+import { ManimCell } from './manimCell';
+import { ManimCellRanges } from './manimCellRanges';
 import { previewCode } from './previewCode';
 
 // This method is called when your extension is activated
@@ -24,7 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
 			const document = editor.document;
 
 			const cursorLine = editor.selection.active.line;
-			const range = CellRangeHandler.getCellRangeAtLine(document, cursorLine);
+			const range = ManimCellRanges.getCellRangeAtLine(document, cursorLine);
 			if (!range) {
 				vscode.window.showErrorMessage('Place your cursor in a Manim cell.');
 				return;

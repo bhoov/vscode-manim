@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export class CellRangeHandler {
+export class ManimCellRanges {
 
     private static readonly MARKER = /^(\s*##)/;
 
@@ -16,7 +16,7 @@ export class CellRangeHandler {
      * line of the document. Despite this, we call it many times and caching
      * could be beneficial in the future.
      */
-    public static calculateCellRanges(document: vscode.TextDocument): vscode.Range[] {
+    public static calculateRanges(document: vscode.TextDocument): vscode.Range[] {
         const ranges: vscode.Range[] = [];
         let start: number | null = null;
         let startIndent: number | null = null;
@@ -30,7 +30,7 @@ export class CellRangeHandler {
 
             const currentIndent = line.firstNonWhitespaceCharacterIndex;
 
-            if (CellRangeHandler.MARKER.test(line.text)) {
+            if (ManimCellRanges.MARKER.test(line.text)) {
                 if (start !== null) {
                     ranges.push(this.constructNewRange(start, i - 1, document));
                 }
@@ -57,7 +57,7 @@ export class CellRangeHandler {
      * outside of a Manim cell.
      */
     public static getCellRangeAtLine(document: vscode.TextDocument, line: number): vscode.Range | null {
-        const ranges = CellRangeHandler.calculateCellRanges(document);
+        const ranges = ManimCellRanges.calculateRanges(document);
         for (const range of ranges) {
             if (range.start.line <= line && line <= range.end.line) {
                 return range;
