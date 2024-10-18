@@ -14,6 +14,10 @@ export function activate(context: vscode.ExtensionContext) {
 	const codeWatcher = new CodeWatcher();
 	const codeLensProvider = vscode.languages.registerCodeLensProvider({ language: 'python' }, codeWatcher);
 
+	const previewManimViaCell = vscode.commands.registerCommand('vscode-manim.previewManimCell', () => {
+		vscode.window.showInformationMessage('Previewing Manim cell (TODO)');
+	});
+
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
@@ -50,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	context.subscriptions.push(disposable1, disposable2, codeLensProvider);
+	context.subscriptions.push(disposable1, disposable2, previewManimViaCell, codeLensProvider);
 }
 
 // This method is called when your extension is deactivated

@@ -23,7 +23,7 @@ export class CodeWatcher implements vscode.CodeLensProvider {
     public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): vscode.CodeLens {
         codeLens.command = {
             title: "Python Cell",
-            command: "",
+            command: "vscode-manim.previewManimCell",
             arguments: []
         };
         return codeLens;

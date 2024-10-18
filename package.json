@@ -24,6 +24,10 @@
         "title": "Hello Data from vscode-manim"
       },
       {
+        "command": "vscode-manim.previewManimCell",
+        "title": "Preview the current Manim cell"
+      },
+      {
         "command": "vscode-manim.checkpointPaste",
         "title": "Checkpoint Paste from vscode-manim"
       }
