@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
  * This workflow is described in [1] and was adapted from Sublime to VSCode by
  * means of this extension. The main features are discussed in [2]. A demo
  * is shown in the video "How I animate 3Blue1Brown" by Grant Sanderson [3],
- * which the workflow being showcased between 3:32 and 6:48.
+ * with the workflow being showcased between 3:32 and 6:48.
  * 
  * [1] https://github.com/3b1b/videos#workflow
  * [2] https://github.com/ManimCommunity/manim/discussions/3954#discussioncomment-10933720
