@@ -9,10 +9,12 @@ import { previewCode } from './previewCode';
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vscode-manim" is now active!');
-
+	/**
+	 * Command to preview the Manim code of the cell where the cursor is placed
+	 * (when accessed via the command pallette) or the code of the cell where
+	 * the codelens was clicked.
+	 * 
+	 */
 	const previewManimCell = vscode.commands.registerCommand('vscode-manim.previewManimCell',
 		(cellCode: string | undefined) => {
 			// User has executed the command via command pallette
@@ -37,43 +39,49 @@ export function activate(context: vscode.ExtensionContext) {
 			previewCode(cellCode);
 		});
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable1 = vscode.commands.registerCommand('vscode-manim.helloData', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		// terminal.show();
-		vscode.window.showInformationMessage('Hello Data from vscode-manim!');
-	});
+	/**
+	 * Command to preview the Manim code of the selected text.
+	 */
+	const previewSelection = vscode.commands.registerCommand('vscode-manim.previewSelection',
+		async () => {
+			const editor = vscode.window.activeTextEditor;
+			if (!editor) {
+				vscode.window.showErrorMessage('Select some code to preview.');
+				return;
+			}
 
-	const disposable2 = vscode.commands.registerCommand('vscode-manim.checkpointPaste', async () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-		const editor = vscode.window.activeTextEditor;
-		if (editor) {
-			// Get the selected text
+			let selectedText;
 			const selection = editor.selection;
-			const selectedText = editor.document.getText(selection);
+			if (selection.isEmpty) {
+				// If nothing is selected - select the whole line
+				const line = editor.document.lineAt(selection.start.line);
+				selectedText = editor.document.getText(line.range);
+			} else {
+				// If selected - extend selection to start and end of lines
+				const range = new vscode.Range(
+					editor.document.lineAt(selection.start.line).range.start,
+					editor.document.lineAt(selection.end.line).range.end
+				);
+				selectedText = editor.document.getText(range);
 
-			// Copy the selected text to the clipboard
-			await vscode.env.clipboard.writeText(selectedText);
+				// TODO (future): If the selection does not start with a comment
+				// try to include lines beforehand up to a previous comment
+				// if this comment is THRESHOLD away from the first line
+				// of the selection.
+				// This behavior could be optional and be enabled via a
+				// user setting.
+			}
 
-			// Create or show the terminal
-			const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
+			if (!selectedText) {
+				vscode.window.showErrorMessage('No text selected in the editor');
+				return;
+			}
 
-			// Send the checkpoint_paste() command
-			// terminal.sendText('checkpoint_paste()', false);
-			terminal.sendText('checkpoint_paste()');
-
-			vscode.window.showInformationMessage('Copied selected code and sent checkpoint_paste() to manim terminal');
-		} else {
-			vscode.window.showErrorMessage('No text is selected');
+			previewCode(selectedText);
 		}
-	});
+	);
 
-	context.subscriptions.push(disposable1, disposable2, previewManimCell);
+	context.subscriptions.push(previewManimCell, previewSelection);
 	registerManimCellProviders(context);
 }
 

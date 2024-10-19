@@ -20,24 +20,26 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-manim.helloData",
-        "title": "Hello Data from vscode-manim"
-      },
-      {
         "command": "vscode-manim.previewManimCell",
         "title": "Preview active Manim cell"
       },
       {
-        "command": "vscode-manim.checkpointPaste",
-        "title": "Checkpoint Paste from vscode-manim"
+        "command": "vscode-manim.previewSelection",
+        "title": "Preview selected Manim code"
       }
     ],
     "keybindings": [
         {
-            "command": "vscode-manim.checkpointPaste",
-            "key": "ctrl+' ctrl+r",
-            "mac": "cmd+' cmd+r",
+            "command": "vscode-manim.previewManimCell",
+            "key": "ctrl+' ctrl+e",
+            "mac": "cmd+' cmd+e",
             "when": "editorTextFocus"
+        },
+        {
+          "command": "vscode-manim.previewSelection",
+          "key": "ctrl+' ctrl+r",
+          "mac": "cmd+' cmd+r",
+          "when": "editorTextFocus"
         }
     ]
   },
