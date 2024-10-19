@@ -13,7 +13,6 @@ export function activate(context: vscode.ExtensionContext) {
 	 * Command to preview the Manim code of the cell where the cursor is placed
 	 * (when accessed via the command pallette) or the code of the cell where
 	 * the codelens was clicked.
-	 * 
 	 */
 	const previewManimCell = vscode.commands.registerCommand('vscode-manim.previewManimCell',
 		(cellCode: string | undefined) => {
