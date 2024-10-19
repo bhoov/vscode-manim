@@ -34,10 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
 				cellCode = document.getText(range);
 			}
 
-			const succeeded = previewCode(cellCode);
-			if (!succeeded) {
-				vscode.window.showErrorMessage('Failed to preview Manim code. Take a look at the logs.');
-			}
+			previewCode(cellCode);
 		});
 
 	// The command has been defined in the package.json file
