@@ -37,7 +37,14 @@ export function activate(context: vscode.ExtensionContext) {
 
 			previewCode(cellCode);
 		});
-
+	
+	// TODO: Why do we even need this "preview selection feature"? I think that
+	// we rather want a "Preview active Manim Cell up to cursor position" feature.
+	// Otherwise, we need to remind the user that they have to include the start
+	// of the cell in the selection, which is pretty annoying to do manually.
+	//
+	// I rather want to place my cursor anywhere in a cell and press a key
+	// to run the cell up to the cursor position.
 	/**
 	 * Command to preview the Manim code of the selected text.
 	 */
@@ -69,6 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
 				// of the selection.
 				// This behavior could be optional and be enabled via a
 				// user setting.
+				// See also TODO above.
 			}
 
 			if (!selectedText) {
