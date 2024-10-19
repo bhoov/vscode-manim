@@ -19,12 +19,6 @@ const COMMAND = `\x0C checkpoint_paste()`; // \x0C is Ctrl + L
  * @param code The code to preview (e.g. from a Manim cell or from a custom selection).
  */
 export async function previewCode(code: string): Promise<void> {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-        vscode.window.showErrorMessage('Cannot find the active text file.');
-        return;
-    }
-
     const clipboardBuffer = await vscode.env.clipboard.readText();
     await vscode.env.clipboard.writeText(code);
 
@@ -41,5 +35,8 @@ export async function previewCode(code: string): Promise<void> {
     // Restore original clipboard content
     setTimeout(async () => {
         await vscode.env.clipboard.writeText(clipboardBuffer);
-    }, 500);
+    }, 650);
+    // TODO (later): Make timeout a user setting. This is necessary since
+    // clipboard_check() make take a while on slower computers to actually
+    // read the clipboard content.
 }
