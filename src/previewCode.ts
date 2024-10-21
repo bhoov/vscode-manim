@@ -55,12 +55,10 @@ export async function previewCode(code: string): Promise<void> {
         }
 
         // Restore original clipboard content
+        const timeout = vscode.workspace.getConfiguration("vscode-manim").clipboardTimeout;
         setTimeout(async () => {
             await vscode.env.clipboard.writeText(clipboardBuffer);
-        }, 650);
-        // TODO (later): Make timeout a user setting. This is necessary since
-        // clipboard_check() may take a while on slower computers to actually
-        // read the clipboard content.
+        }, timeout);
     } catch (error) {
         vscode.window.showErrorMessage(`Error: ${error}`);
     } finally {
