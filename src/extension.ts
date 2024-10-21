@@ -13,6 +13,11 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "vscode-manim" is now active!');
 
+	/**
+	 * Command to preview the Manim code of the cell where the cursor is placed
+	 * (when accessed via the command pallette) or the code of the cell where
+	 * the codelens was clicked.
+	 */
 	const previewManimCell = vscode.commands.registerCommand('vscode-manim.previewManimCell',
 		(cellCode: string | undefined) => {
 			// User has executed the command via command pallette
@@ -50,15 +55,46 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello Data from vscode-manim!');
 	});
 
-	const disposable2 = vscode.commands.registerCommand('vscode-manim.checkpointPaste', async () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-		const editor = vscode.window.activeTextEditor;
-		if (editor) {
-			// Get the selected text
-			const selection = editor.selection;
-			const selectedText = editor.document.getText(selection);
+
+	/**
+	 * checkpoint_paste() functionality in a VSCode extension
+	 */
+	let isExecuting = false;  // Flag: to prevent several commands executing at the same time (because clipboard saving would become uncontrollable in this case)
+	const checkpointPaste = vscode.commands.registerCommand('vscode-manim.checkpointPaste', async () => {
+		if (isExecuting) {
+			vscode.window.showInformationMessage('Please wait until the current command finishes executing.');
+			return;
+		}
+
+		isExecuting = true;
+		try {
+			// Editor must be found:
+			const editor = vscode.window.activeTextEditor;
+			if (!editor) {
+				vscode.window.showErrorMessage('Editor not found');
+				return;
+			}
+			let selectedText;
+			if (editor.selection.isEmpty) {
+				// If nothing is selected - select the whole line (for convenience):
+				const line = editor.document.lineAt(editor.selection.start.line);
+				selectedText = editor.document.getText(line.range);
+			} else {
+				// If selected - extend selection to start and end of lines (for convenience):
+				const range = new vscode.Range(
+					editor.selection.start.with(undefined, 0),
+					editor.selection.end.with(undefined, Number.MAX_SAFE_INTEGER)
+				);
+				selectedText = editor.document.getText(range);
+			}
+			// Selected text must not be empty:
+			if (!selectedText) {
+				vscode.window.showErrorMessage('No text selected in the editor');
+				return;
+			}
+
+			// Save current clipboard content
+			const clipboardBuffer = await vscode.env.clipboard.readText();
 
 			// Copy the selected text to the clipboard
 			await vscode.env.clipboard.writeText(selectedText);
@@ -67,14 +103,25 @@ export function activate(context: vscode.ExtensionContext) {
 			const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
 
 			// Send the checkpoint_paste() command
-			// terminal.sendText('checkpoint_paste()', false);
-			terminal.sendText('checkpoint_paste()');
+			terminal.sendText(
+				'\x0C' +  // to center the terminal (Command + l)
+				'checkpoint_paste()'
+			);
 
-			vscode.window.showInformationMessage('Copied selected code and sent checkpoint_paste() to manim terminal');
-		} else {
-			vscode.window.showErrorMessage('No text is selected');
+			// move 1 line down in the text editor (to get ready to execute next line)
+			await vscode.commands.executeCommand('cursorDown');
+
+			// Restore original clipboard content
+			await new Promise(resolve => setTimeout(resolve, 500));  // must wait a bit (so that checkpoint_paste() above doesn't capture the next clipboard)
+			await vscode.env.clipboard.writeText(clipboardBuffer);
+
+		} catch (error) {
+			vscode.window.showErrorMessage(`Error: ${error}`);
+		} finally {
+			isExecuting = false;
 		}
 	});
+
 
 	context.subscriptions.push(disposable1, disposable2, previewManimCell);
 	registerManimCellProviders(context);
