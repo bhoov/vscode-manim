@@ -15,7 +15,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": ["*"],
+  "activationEvents": [
+    "*"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -24,17 +26,28 @@
         "title": "Hello Data from vscode-manim"
       },
       {
+        "command": "vscode-manim.previewManimCell",
+        "title": "Preview active Manim Cell",
+        "category": "Manim"
+      },
+      {
         "command": "vscode-manim.checkpointPaste",
         "title": "Checkpoint Paste from vscode-manim"
       }
     ],
     "keybindings": [
-        {
-            "command": "vscode-manim.checkpointPaste",
-            "key": "ctrl+' ctrl+r",
-            "mac": "cmd+' cmd+r",
-            "when": "editorTextFocus"
-        }
+      {
+        "command": "vscode-manim.previewManimCell",
+        "key": "ctrl+' ctrl+e",
+        "mac": "cmd+' cmd+e",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "vscode-manim.checkpointPaste",
+        "key": "ctrl+' ctrl+r",
+        "mac": "cmd+' cmd+r",
+        "when": "editorTextFocus"
+      }
     ]
   },
   "scripts": {
@@ -55,7 +68,7 @@
     "typescript": "^5.6.2",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1"
-  }, 
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/bhoov/vscode-manim"
