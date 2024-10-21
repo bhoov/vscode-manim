@@ -1,17 +1,9 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { ManimCell } from './manimCell';
 import { ManimCellRanges } from './manimCellRanges';
 import { previewCode } from './previewCode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vscode-manim" is now active!');
 
 	/**
 	 * Command to preview the Manim code of the cell where the cursor is placed
@@ -41,16 +33,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 			previewCode(cellCode);
 		});
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable1 = vscode.commands.registerCommand('vscode-manim.helloData', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		// terminal.show();
-		vscode.window.showInformationMessage('Hello Data from vscode-manim!');
-	});
 
 	// TODO: Why do we even need this "preview selection feature"? I think that
 	// we rather want a "Preview active Manim Cell up to cursor position" feature.
@@ -102,7 +84,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	);
 
-	context.subscriptions.push(disposable1, previewManimCell, previewSelection);
+	context.subscriptions.push(previewManimCell, previewSelection);
 	registerManimCellProviders(context);
 }
 
@@ -140,5 +122,4 @@ function registerManimCellProviders(context: vscode.ExtensionContext) {
 	}
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() { }
