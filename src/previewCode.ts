@@ -37,6 +37,6 @@ export async function previewCode(code: string): Promise<void> {
         await vscode.env.clipboard.writeText(clipboardBuffer);
     }, 650);
     // TODO (later): Make timeout a user setting. This is necessary since
-    // clipboard_check() make take a while on slower computers to actually
+    // clipboard_check() may take a while on slower computers to actually
     // read the clipboard content.
 }
