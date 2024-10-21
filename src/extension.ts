@@ -76,7 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 
 			if (!selectedText) {
-				vscode.window.showErrorMessage('No text selected in the editor');
+				vscode.window.showErrorMessage('Select some code to preview.');
 				return;
 			}
 
