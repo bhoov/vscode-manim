@@ -2,7 +2,7 @@
   "name": "vscode-manim",
   "displayName": "vscode-manim",
   "description": "Replicates Grant Sanderson's sublime workflow for manim in VSCode",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "bhoov",
   "author": {
     "name": "Ben Hoover",
