@@ -28,7 +28,8 @@
       },
       {
         "command": "vscode-manim.previewSelection",
-        "title": "Preview selected Manim code"
+        "title": "Preview selected Manim code",
+        "category": "Manim"
       }
     ],
     "keybindings": [
