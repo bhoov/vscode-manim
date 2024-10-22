@@ -32,8 +32,18 @@
         "category": "Manim"
       },
       {
-        "command": "vscode-manim.runScene",
-        "title": "Run scene up to the current line number",
+        "command": "vscode-manim.startScene",
+        "title": "Start the scene (in the state between the cursor's and the next line)",
+        "category": "Manim"
+      },
+      {
+        "command": "vscode-manim.exitScene",
+        "title": "Close the animation window and the IPython terminal",
+        "category": "Manim"
+      },
+      {
+        "command": "vscode-manim.clearScene",
+        "title": "Remove all objects from the current scene",
         "category": "Manim"
       }
     ],
@@ -51,10 +61,20 @@
         "when": "editorTextFocus"
       },
       {
-        "command": "vscode-manim.runScene",
-        "key": "ctrl+shift+' ctrl+shift+r",
-        "mac": "cmd+shift+' cmd+shift+r",
-        "when": "editorTextFocus || terminalFocus"
+        "command": "vscode-manim.startScene",
+        "key": "ctrl+' ctrl+s",
+        "mac": "cmd+' cmd+s",
+        "when": "(editorTextFocus || terminalFocus) && editorLangId == 'python'"
+      },
+      {
+        "command": "vscode-manim.exitScene",
+        "key": "ctrl+' ctrl+w",
+        "mac": "cmd+' cmd+w"
+      },
+      {
+        "command": "vscode-manim.clearScene",
+        "key": "ctrl+' ctrl+c",
+        "mac": "cmd+' cmd+c"
       }
     ],
     "configuration": {
