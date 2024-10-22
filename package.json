@@ -30,6 +30,11 @@
         "command": "vscode-manim.previewSelection",
         "title": "Preview selected Manim code",
         "category": "Manim"
+      },
+      {
+        "command": "vscode-manim.runScene",
+        "title": "Run scene up to the current line number",
+        "category": "Manim"
       }
     ],
     "keybindings": [
@@ -44,6 +49,12 @@
         "key": "ctrl+' ctrl+r",
         "mac": "cmd+' cmd+r",
         "when": "editorTextFocus"
+      },
+      {
+        "command": "vscode-manim.runScene",
+        "key": "ctrl+shift+' ctrl+shift+r",
+        "mac": "cmd+shift+' cmd+shift+r",
+        "when": "editorTextFocus || terminalFocus"
       }
     ],
     "configuration": {

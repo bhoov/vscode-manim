@@ -16,11 +16,26 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	);
 
-	context.subscriptions.push(previewManimCellCommand, previewSelectionCommand);
+	const runSceneCommand = vscode.commands.registerCommand(
+		'vscode-manim.runScene', () => {
+			runScene();
+		}
+	);
+
+	context.subscriptions.push(
+		previewManimCellCommand,
+		previewSelectionCommand,
+		runSceneCommand
+	);
 	registerManimCellProviders(context);
 }
 
 export function deactivate() { }
+
+
+
+
+// --------------------------------- Helpers: ---------------------------------
 
 /**
  * Command to preview the Manim code of the cell where the cursor is placed
@@ -82,6 +97,93 @@ function previewSelection() {
 	}
 
 	previewCode(selectedText);
+}
+
+/**
+ * Runs the `manimgl` command in the terminal, with the current cursor's line number:
+ * manimgl <file_name> <ClassName> [-se <line_number>]
+ * 
+ * Notes:
+ * - it loads the scene as it would be AFTER this line
+ * - if the cursor is on a class definition line, `-se <line_number>` is NOT added (i.e. it loads the whole scene)
+ * - also copies that command to the clipboard with additional args: `--prerun --finder -w`
+ * 
+ * - this function is only for MacOS (because it uses `osascript` to focus the VSCode window)
+ */
+async function runScene() {
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		vscode.window.showErrorMessage('Editor not found');
+		return;
+	}
+
+	// Save the active file:
+	vscode.commands.executeCommand('workbench.action.files.save');
+
+	const file_path = editor.document.fileName;  // absolute path
+	if (!file_path.endsWith('.py')) {
+		vscode.window.showErrorMessage('Check failed: file must end with .py');
+		return;
+	}
+
+	const contents = editor.document.getText();
+	const all_lines = contents.split("\n");
+
+	// Find which lines define classes
+	const class_lines = all_lines  // E.g., class_lines = [{ line: "class FirstScene(Scene):", index: 3 }, ...]
+		.map((line, index) => ({ line, index }))
+		.filter(({ line }) => /^class (.+?)\((.+?)\):/.test(line));
+
+	// Where is the cursor (row = line)
+	const row = editor.selection.start.line;
+
+	// Find the first class defined before where the cursor is
+	const matching_class = class_lines  // E.g., matching_class = { line: "class SelectedScene(Scene):", index: 42 }
+		.reverse()
+		.find(({ index }) => index <= row);
+	if (!matching_class) {
+		vscode.window.showErrorMessage('No matching classes');
+		return;
+	}
+	const scene_name = matching_class.line.slice("class ".length, matching_class.line.indexOf("("));  // E.g., scene_name = "SelectedScene"
+
+	// Create the command
+	const cmds = ["manimgl", file_path, scene_name];
+	let enter = false;
+	if (row !== matching_class.index) {
+		cmds.push(`-se ${row + 1}`);
+		enter = true;
+	}
+	const command = cmds.join(" ");
+
+	// If one wants to run it in a different terminal,
+	// it's often to write to a file
+	await vscode.env.clipboard.writeText(command + " --prerun --finder -w");
+
+	// Run the command
+	const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
+	terminal.sendText(command);
+
+	// // Focus some windows (ONLY MacOS). Commented out because it's not really needed too much??
+	// if (enter) {
+	// 	// Keep cursor where it started (in VSCode)
+	// 	const cmd_focus_vscode = 'osascript -e "tell application \\"Visual Studio Code\\" to activate"';
+	// 	// Execute the command in the shell after a delay (to give the animation window enough time to open)
+	// 	await new Promise(resolve => setTimeout(resolve, 2500));
+	// 	require('child_process').exec(cmd_focus_vscode);
+	// } else {
+	// 	terminal.show();
+	// }
+
+	// // Info for debugging:
+	// console.log('file_path:', file_path);
+	// console.log('row:', row);
+	// // console.log('contents:', contents);
+	// // console.log('all_lines:', all_lines);
+	// console.log('class_lines:', class_lines);
+	// console.log('matching_class:', matching_class);
+	// console.log('scene_name:', scene_name);
+	// console.log('command:', command);
 }
 
 /**
