@@ -107,8 +107,6 @@ function previewSelection() {
  * - it loads the scene as it would be AFTER this line
  * - if the cursor is on a class definition line, `-se <line_number>` is NOT added (i.e. it loads the whole scene)
  * - also copies that command to the clipboard with additional args: `--prerun --finder -w`
- * 
- * - this function is only for MacOS (because it uses `osascript` to focus the VSCode window)
  */
 async function runScene() {
 	const editor = vscode.window.activeTextEditor;
@@ -164,7 +162,7 @@ async function runScene() {
 	const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
 	terminal.sendText(command);
 
-	// // Focus some windows (ONLY MacOS). Commented out because it's not really needed too much??
+	// // Focus some windows (ONLY for MacOS because it uses `osascript`!!). Commented out because it's not really needed too much??
 	// if (enter) {
 	// 	// Keep cursor where it started (in VSCode)
 	// 	const cmd_focus_vscode = 'osascript -e "tell application \\"Visual Studio Code\\" to activate"';
