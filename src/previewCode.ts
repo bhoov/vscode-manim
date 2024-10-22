@@ -1,4 +1,22 @@
 import * as vscode from 'vscode';
+import { window } from 'vscode';
+
+const PREVIEW_COMMAND = `\x0C checkpoint_paste()`; // \x0C is Ctrl + L
+
+/**
+ * Whether the extension is currently executing a Manim command.
+ * 
+ * Note that this is not capturing whether the `checkpoint_paste()` command is
+ * still running. Instead, it only captures whether reading/writing to clipboard
+ * is currently happening to prevent unpredictable behavior.
+ * 
+ * We don't need to capture the state of `checkpoint_paste()` because users
+ * might actually want to preview a cell (or another one) again from the start
+ * even though the animation is still running. With the new VSCode terminal
+ * shell integration, it will automatically send a `Ctrl + C` to the terminal
+ * when a new command is sent, so the previous command will be interrupted.
+ */
+let isExecuting = false;
 
 /**
  * Interactively previews the given Manim code by means of the
@@ -14,18 +32,36 @@ import * as vscode from 'vscode';
  * [3] https://youtu.be/rbu7Zu5X1zI
  *
  * @param code The code to preview (e.g. from a Manim cell or from a custom selection).
- * @returns True if the preview was successful, false otherwise.
  */
-export function previewCode(code: string): boolean {
-    // TODO: Implement "preview code", e.g. open terminal, paste command,
-    // restore clipboard etc. Here instead some funny dummy implementation.
-    vscode.window.showInformationMessage(`Previewing Manim code: ${code}`);
-    const lines = code.split('\n');
-    for (const line of lines) {
-        if (line.trim().startsWith('#')) {
-            vscode.window.showInformationMessage(`Got a comment: ${line}`);
-        }
+export async function previewCode(code: string): Promise<void> {
+    if (isExecuting) {
+        vscode.window.showInformationMessage('Please wait a few seconds, then try again.');
+        return;
     }
+    isExecuting = true;
 
-    return true;
+    try {
+        const clipboardBuffer = await vscode.env.clipboard.readText();
+        await vscode.env.clipboard.writeText(code);
+
+        // Send command to interactive IPython shell
+        // See the new Terminal shell integration API (from VSCode release 1.93)
+        // https://code.visualstudio.com/updates/v1_93#_terminal-shell-integration-api
+        const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
+        if (terminal.shellIntegration) {
+            terminal.shellIntegration.executeCommand(PREVIEW_COMMAND);
+        } else {
+            terminal.sendText(PREVIEW_COMMAND);
+        }
+
+        // Restore original clipboard content
+        const timeout = vscode.workspace.getConfiguration("vscode-manim").clipboardTimeout;
+        setTimeout(async () => {
+            await vscode.env.clipboard.writeText(clipboardBuffer);
+        }, timeout);
+    } catch (error) {
+        vscode.window.showErrorMessage(`Error: ${error}`);
+    } finally {
+        isExecuting = false;
+    }
 }

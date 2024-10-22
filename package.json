@@ -22,17 +22,14 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-manim.helloData",
-        "title": "Hello Data from vscode-manim"
-      },
-      {
         "command": "vscode-manim.previewManimCell",
         "title": "Preview active Manim Cell",
         "category": "Manim"
       },
       {
-        "command": "vscode-manim.checkpointPaste",
-        "title": "Checkpoint Paste from vscode-manim"
+        "command": "vscode-manim.previewSelection",
+        "title": "Preview selected Manim code",
+        "category": "Manim"
       }
     ],
     "keybindings": [
@@ -43,12 +40,22 @@
         "when": "editorTextFocus"
       },
       {
-        "command": "vscode-manim.checkpointPaste",
+        "command": "vscode-manim.previewSelection",
         "key": "ctrl+' ctrl+r",
         "mac": "cmd+' cmd+r",
         "when": "editorTextFocus"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Interactive Manim",
+      "properties": {
+        "vscode-manim.clipboardTimeout": {
+          "type": "number",
+          "default": 650,
+          "markdownDescription": "Configures the number of milliseconds (ms) to wait before your clipboard is restored. (Your clipboard is used to temporarily copy the selected code to be accessible by Manim)."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
