@@ -1,9 +1,7 @@
 import * as vscode from 'vscode';
 import { window } from 'vscode';
 
-const PREVIEW_COMMAND = `\x0C checkpoint_paste()\x1b`;
-// \x0C: is Ctrl + L
-// \x1b: https://github.com/bhoov/manim-notebook/issues/18#issuecomment-2431146809
+const PREVIEW_COMMAND = `\x0C checkpoint_paste()`; // \x0C is Ctrl + L
 
 /**
  * Whether the extension is currently executing a Manim command.
@@ -46,15 +44,86 @@ export async function previewCode(code: string): Promise<void> {
         const clipboardBuffer = await vscode.env.clipboard.readText();
         await vscode.env.clipboard.writeText(code);
 
-        // Send command to interactive IPython shell
-        // See the new Terminal shell integration API (from VSCode release 1.93)
-        // https://code.visualstudio.com/updates/v1_93#_terminal-shell-integration-api
         const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-        if (terminal.shellIntegration) {
-            terminal.shellIntegration.executeCommand(PREVIEW_COMMAND);
-        } else {
-            terminal.sendText(PREVIEW_COMMAND);
+        if (!terminal.shellIntegration) {
+            await vscode.window.showErrorMessage("No terminal TODO");
+            return;
         }
+
+
+        let currentSceneName: string | undefined = undefined;
+        let currentProgress: number = 0;
+
+        // Send command to terminal and capture output
+        window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: "Previewing Manim",
+            cancellable: true
+        }, (progress, token) => {
+            token.onCancellationRequested(() => {
+                console.log("User cancelled the long running operation");
+            });
+
+            progress.report({ increment: 0 });
+
+            return new Promise<void>((resolve, reject) => {
+                window.onDidStartTerminalShellExecution(
+                    async (event: vscode.TerminalShellExecutionStartEvent) => {
+                        console.log('onDidStartTerminalShellExecution', event);
+                        const stream = event.execution.read();
+                        for await (const data of stream) {
+                            if (!data.includes("%")) {
+                                continue;
+                            }
+                            // console.log(`🎉: ${data}`);
+                            const progressString = data.match(/\b\d{1,2}(?=\s?%)/)?.[0];
+                            if (!progressString) {
+                                continue;
+                            }
+
+                            const newProgress = parseInt(progressString);
+                            console.log(`✅ ${newProgress}`);
+                            if (newProgress >= 97) {
+                                await new Promise(resolve => setTimeout(resolve, 1000));
+                                resolve();
+                                return;
+                            }
+
+                            let progressIncrement = newProgress - currentProgress;
+
+                            const split = data.split(" ");
+                            if (split.length < 2) {
+                                continue;
+                            }
+                            let sceneName = data.split(" ")[1];
+                            // remove last char which is a ":"
+                            sceneName = sceneName.substring(0, sceneName.length - 1);
+                            if (sceneName !== currentSceneName) {
+                                if (currentSceneName === undefined) {
+                                    progressIncrement = -currentProgress;
+                                }
+                                currentSceneName = sceneName;
+                            }
+
+                            currentProgress = newProgress;
+
+                            // Update progress
+                            progress.report({
+                                increment: progressIncrement,
+                                message: sceneName
+                            });
+                        }
+                    });
+
+                window.onDidEndTerminalShellExecution(
+                    async (event: vscode.TerminalShellExecutionEndEvent) => {
+                        console.log('onDidEndTerminalShellExecution', event);
+                    });
+
+            });
+        });
+
+        terminal.shellIntegration.executeCommand(PREVIEW_COMMAND);
 
         // Restore original clipboard content
         const timeout = vscode.workspace.getConfiguration("manim-notebook").clipboardTimeout;
