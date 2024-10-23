@@ -6,30 +6,30 @@ import { previewCode } from './previewCode';
 export function activate(context: vscode.ExtensionContext) {
 
 	const previewManimCellCommand = vscode.commands.registerCommand(
-		'vscode-manim.previewManimCell', (cellCode: string | undefined) => {
+		'manim-notebook.previewManimCell', (cellCode: string | undefined) => {
 			previewManimCell(cellCode);
 		});
 
 	const previewSelectionCommand = vscode.commands.registerCommand(
-		'vscode-manim.previewSelection', () => {
+		'manim-notebook.previewSelection', () => {
 			previewSelection();
 		}
 	);
 
 	const startSceneCommand = vscode.commands.registerCommand(
-		'vscode-manim.startScene', () => {
+		'manim-notebook.startScene', () => {
 			startScene();
 		}
 	);
 
 	const exitSceneCommand = vscode.commands.registerCommand(
-		'vscode-manim.exitScene', () => {
+		'manim-notebook.exitScene', () => {
 			exitScene();
 		}
 	);
 
 	const clearSceneCommand = vscode.commands.registerCommand(
-		'vscode-manim.clearScene', () => {
+		'manim-notebook.clearScene', () => {
 			clearScene();
 		}
 	);

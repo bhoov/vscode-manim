@@ -1,8 +1,8 @@
 {
-  "name": "vscode-manim",
-  "displayName": "vscode-manim",
-  "description": "Replicates Grant Sanderson's sublime workflow for manim in VSCode",
-  "version": "0.0.3",
+  "name": "manim-notebook",
+  "displayName": "Manim Notebook",
+  "description": "Replicates Grant Sanderson's interactive workflow for manim in VSCode",
+  "version": "0.0.4",
   "publisher": "bhoov",
   "author": {
     "name": "Ben Hoover",
@@ -22,57 +22,57 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-manim.previewManimCell",
+        "command": "manim-notebook.previewManimCell",
         "title": "Preview active Manim Cell",
-        "category": "Manim"
+        "category": "Manim Notebook"
       },
       {
-        "command": "vscode-manim.previewSelection",
+        "command": "manim-notebook.previewSelection",
         "title": "Preview selected Manim code",
-        "category": "Manim"
+        "category": "Manim Notebook"
       },
       {
-        "command": "vscode-manim.startScene",
+        "command": "manim-notebook.startScene",
         "title": "Start the scene (in the state between the cursor's and the next line)",
-        "category": "Manim"
+        "category": "Manim Notebook"
       },
       {
-        "command": "vscode-manim.exitScene",
+        "command": "manim-notebook.exitScene",
         "title": "Close the animation window and the IPython terminal",
-        "category": "Manim"
+        "category": "Manim Notebook"
       },
       {
-        "command": "vscode-manim.clearScene",
+        "command": "manim-notebook.clearScene",
         "title": "Remove all objects from the current scene",
-        "category": "Manim"
+        "category": "Manim Notebook"
       }
     ],
     "keybindings": [
       {
-        "command": "vscode-manim.previewManimCell",
+        "command": "manim-notebook.previewManimCell",
         "key": "ctrl+' ctrl+e",
         "mac": "cmd+' cmd+e",
-        "when": "editorTextFocus"
+        "when": "(editorTextFocus || terminalFocus) && editorLangId == 'python'"
       },
       {
-        "command": "vscode-manim.previewSelection",
+        "command": "manim-notebook.previewSelection",
         "key": "ctrl+' ctrl+r",
         "mac": "cmd+' cmd+r",
-        "when": "editorTextFocus"
+        "when": "(editorTextFocus || terminalFocus) && editorLangId == 'python'"
       },
       {
-        "command": "vscode-manim.startScene",
+        "command": "manim-notebook.startScene",
         "key": "ctrl+' ctrl+s",
         "mac": "cmd+' cmd+s",
         "when": "(editorTextFocus || terminalFocus) && editorLangId == 'python'"
       },
       {
-        "command": "vscode-manim.exitScene",
+        "command": "manim-notebook.exitScene",
         "key": "ctrl+' ctrl+w",
         "mac": "cmd+' cmd+w"
       },
       {
-        "command": "vscode-manim.clearScene",
+        "command": "manim-notebook.clearScene",
         "key": "ctrl+' ctrl+c",
         "mac": "cmd+' cmd+c"
       }
@@ -80,7 +80,7 @@
     "configuration": {
       "title": "Interactive Manim",
       "properties": {
-        "vscode-manim.clipboardTimeout": {
+        "manim-notebook.clipboardTimeout": {
           "type": "number",
           "default": 650,
           "markdownDescription": "Configures the number of milliseconds (ms) to wait before your clipboard is restored. (Your clipboard is used to temporarily copy the selected code to be accessible by Manim)."
@@ -109,7 +109,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bhoov/vscode-manim"
+    "url": "https://github.com/bhoov/manim-notebook"
   },
   "icon": "logo.png"
 }
