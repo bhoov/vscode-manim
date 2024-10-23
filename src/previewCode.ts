@@ -53,6 +53,7 @@ export async function previewCode(code: string): Promise<void> {
 
         let currentSceneName: string | undefined = undefined;
         let currentProgress: number = 0;
+        let inCount = 0;
 
         // Send command to terminal and capture output
         window.withProgress({
@@ -72,10 +73,22 @@ export async function previewCode(code: string): Promise<void> {
                         console.log('onDidStartTerminalShellExecution', event);
                         const stream = event.execution.read();
                         for await (const data of stream) {
+                            // TODO: do better regex parsing here
+                            const strippedData = strip_ansi_codes(data);
+                            console.log(`🎉: ${strippedData}`);
+
+                            if (strippedData.includes("In [")) {
+                                if (inCount === 1) {
+                                    resolve();
+                                    return;
+                                }
+                                inCount += 1;
+                            }
+
                             if (!data.includes("%")) {
                                 continue;
                             }
-                            // console.log(`🎉: ${data}`);
+                            
                             const progressString = data.match(/\b\d{1,2}(?=\s?%)/)?.[0];
                             if (!progressString) {
                                 continue;
@@ -83,11 +96,6 @@ export async function previewCode(code: string): Promise<void> {
 
                             const newProgress = parseInt(progressString);
                             console.log(`✅ ${newProgress}`);
-                            if (newProgress >= 97) {
-                                await new Promise(resolve => setTimeout(resolve, 1000));
-                                resolve();
-                                return;
-                            }
 
                             let progressIncrement = newProgress - currentProgress;
 
@@ -135,4 +143,10 @@ export async function previewCode(code: string): Promise<void> {
     } finally {
         isExecuting = false;
     }
+}
+
+function strip_ansi_codes(s) {
+    // https://stackoverflow.com/a/14693789/9655481
+    const REGEX = /(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]/;
+    return s.replace(REGEX, '');
 }
