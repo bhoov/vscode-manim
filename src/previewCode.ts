@@ -55,7 +55,7 @@ export async function previewCode(code: string): Promise<void> {
         }
 
         // Restore original clipboard content
-        const timeout = vscode.workspace.getConfiguration("vscode-manim").clipboardTimeout;
+        const timeout = vscode.workspace.getConfiguration("manim-notebook").clipboardTimeout;
         setTimeout(async () => {
             await vscode.env.clipboard.writeText(clipboardBuffer);
         }, timeout);

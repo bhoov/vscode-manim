@@ -6,12 +6,12 @@ import { previewCode } from './previewCode';
 export function activate(context: vscode.ExtensionContext) {
 
 	const previewManimCellCommand = vscode.commands.registerCommand(
-		'vscode-manim.previewManimCell', (cellCode: string | undefined) => {
+		'manim-notebook.previewManimCell', (cellCode: string | undefined) => {
 			previewManimCell(cellCode);
 		});
 
 	const previewSelectionCommand = vscode.commands.registerCommand(
-		'vscode-manim.previewSelection', () => {
+		'manim-notebook.previewSelection', () => {
 			previewSelection();
 		}
 	);
