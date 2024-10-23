@@ -41,6 +41,32 @@ vsce package # `npm i -g vsce` if not already installed
 Install locally:
 cmd+shift+p > "Extensions: Install from VSIX"
 
+<br />
+
+---
+
+Alternative:
+
+- set version in `package.json`
+- `cd` to the extension root dir -> `vsce package` (select `y`) -> a `.vsix` file will be created
+- `cmd+shift+p` -> "Extensions: Install from VSIX" -> select this file -> reload window and terminal
+
+<br />
+
+---
+
+[Alternative](https://code.visualstudio.com/api/get-started/your-first-extension):
+
+- open `src/extension.ts`
+- to run the extension in a new window: `F5`  
+    (or: `cmd+shift+d` -> `Run Extension`)  
+    (or: `cmd+shift+p` -> `Debug: Start Debugging`)
+- after extension code changes: in that opened window: `cmd+shift+p` -> `Reload Window`
+
+<br />
+
+---
+
 To publish, bump the version in `package.json` and 
 
 `vsce publish`
