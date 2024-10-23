@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { ManimCell } from './manimCell';
 import { ManimCellRanges } from './manimCellRanges';
 import { previewCode } from './previewCode';
+import { executeTerminalCommand } from './executeTerminalCommand';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -190,12 +191,12 @@ async function startScene() {
 	// await vscode.env.clipboard.writeText(command + " --prerun --finder -w");
 
 	// Run the command
-	const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-	terminal.sendText(command);
+	executeTerminalCommand(command);
 
 	// // Commented out - in case someone would like it.
 	// // For us - it would require MacOS. Also - the effect is not desired.
 	// // Focus some windows (ONLY for MacOS because it uses `osascript`!)
+	// const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
 	// if (enter) {
 	// 	// Keep cursor where it started (in VSCode)
 	// 	const cmd_focus_vscode = 'osascript -e "tell application \\"Visual Studio Code\\" to activate"';
@@ -212,8 +213,7 @@ async function startScene() {
  * It closes the animation window and the IPython terminal.
  */
 function exitScene() {
-	const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-	terminal.sendText("exit()");
+	executeTerminalCommand("exit()");
 }
 
 /**
@@ -221,8 +221,7 @@ function exitScene() {
  * It removes all objects from the scene.
  */
 function clearScene() {
-	const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-	terminal.sendText("clear()");
+	executeTerminalCommand("clear()");
 }
 
 /**
