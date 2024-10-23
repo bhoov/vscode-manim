@@ -37,13 +37,13 @@
         "command": "manim-notebook.previewManimCell",
         "key": "ctrl+' ctrl+e",
         "mac": "cmd+' cmd+e",
-        "when": "editorTextFocus"
+        "when": "(editorTextFocus || terminalFocus) && editorLangId == 'python'"
       },
       {
         "command": "manim-notebook.previewSelection",
         "key": "ctrl+' ctrl+r",
         "mac": "cmd+' cmd+r",
-        "when": "editorTextFocus"
+        "when": "(editorTextFocus || terminalFocus) && editorLangId == 'python'"
       }
     ],
     "configuration": {

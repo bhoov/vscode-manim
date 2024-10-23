@@ -20,26 +20,38 @@ The resulting workflow looks like Grant's 🥳
 <iframe width="560" height="315" src="https://www.youtube.com/embed/VaNHlFh0r5E?si=ClVdBSI1k_-mzKFr" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
-**Recommended keyboard bindings**:
-- `checkpoint_paste` :: `cmd+' cmd+r` 
-
-## Todo
-- [X] Support `checkpoint_paste()` for interactive development
-- [ ] Port Grant's other sublime plugins from [this repo](https://github.com/3b1b/videos/tree/bfa09d02afa9b802004525a86592162021afede9/sublime_custom_commands) (i.e., manim_exit, manim_recorded_checkpoint_paste, manim_run_scene, manim_skipped_checkpoint_paste, open_mirrored_directory), as useful
+**Default keyboard bindings**:
+- `cmd+' cmd+r` :: Run the `checkpoint_paste()` command from 3b1b's manim library on the highlighted code lines (`manim-notebook.previewSelection`)
+- `cmd+' cmd+e` :: Execute all lines of the active manim cell interactively (`manim-notebook.previewManimCell`)
 
 ## Local Development
 
-(mostly for my own future reference)
+Prerequisite: install `vsce` (`npm i -g vsce`)
 
-Make changes to `src/extension.ts` then
+**Install locally**
 
-```
-npm run compile
-vsce package # `npm i -g vsce` if not already installed
-```
+After making changes:
 
-Install locally:
-cmd+shift+p > "Extensions: Install from VSIX"
+1. Bump the version in `package.json`
+2. `vsce package` (select `y`; a `.vsix` file will be created) 
+3. `cmd+shift+p` > "Extensions: Install from VSIX" > select the `.vsix` file
+4. reload window
+
+<br />
+
+---
+
+[Alternative](https://code.visualstudio.com/api/get-started/your-first-extension):
+
+- open `src/extension.ts`
+- to run the extension in a new window: `F5`  
+    (or: `cmd+shift+d` -> `Run Extension`)  
+    (or: `cmd+shift+p` -> `Debug: Start Debugging`)
+- after extension code changes: in that opened window: `cmd+shift+p` -> `Reload Window`
+
+<br />
+
+---
 
 To publish, bump the version in `package.json` and 
 
