@@ -52,13 +52,13 @@
         "command": "vscode-manim.previewManimCell",
         "key": "ctrl+' ctrl+e",
         "mac": "cmd+' cmd+e",
-        "when": "editorTextFocus"
+        "when": "(editorTextFocus || terminalFocus) && editorLangId == 'python'"
       },
       {
         "command": "vscode-manim.previewSelection",
         "key": "ctrl+' ctrl+r",
         "mac": "cmd+' cmd+r",
-        "when": "editorTextFocus"
+        "when": "(editorTextFocus || terminalFocus) && editorLangId == 'python'"
       },
       {
         "command": "vscode-manim.startScene",
