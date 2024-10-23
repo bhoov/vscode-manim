@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
 import { window } from 'vscode';
 
-const PREVIEW_COMMAND = `\x0C checkpoint_paste()`; // \x0C is Ctrl + L
+const PREVIEW_COMMAND = `\x0C checkpoint_paste()\x1b`;
+// \x0C: is Ctrl + L
+// \x1b: https://github.com/bhoov/manim-notebook/issues/18#issuecomment-2431146809
 
 /**
  * Whether the extension is currently executing a Manim command.
