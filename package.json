@@ -24,12 +24,12 @@
       {
         "command": "manim-notebook.previewManimCell",
         "title": "Preview active Manim Cell",
-        "category": "Manim"
+        "category": "Manim Notebook"
       },
       {
         "command": "manim-notebook.previewSelection",
         "title": "Preview selected Manim code",
-        "category": "Manim"
+        "category": "Manim Notebook"
       }
     ],
     "keybindings": [
