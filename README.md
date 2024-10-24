@@ -64,10 +64,10 @@ The resulting workflow can look like Grant's 🥳
 
 <br /><br />
 
-## Contributing
+## Links
 
-GitHub:  
-https://github.com/bhoov/manim-notebook
+- [GitHub](https://github.com/bhoov/manim-notebook)
 
-Developing wiki:  
-https://github.com/bhoov/manim-notebook/wiki/Local-Development
+- [contributing](https://github.com/bhoov/manim-notebook/blob/main/CONTRIBUTING.md)
+
+- [wiki](https://github.com/bhoov/manim-notebook/wiki)
