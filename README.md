@@ -58,3 +58,10 @@ The resulting workflow can look like Grant's 🥳
 <iframe width="560" height="315" src="https://www.youtube.com/embed/VaNHlFh0r5E?si=ClVdBSI1k_-mzKFr" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
+<br /><br />
+
+GitHub:  
+https://github.com/bhoov/manim-notebook
+
+Developing wiki:  
+https://github.com/bhoov/manim-notebook/wiki/Local-Development
