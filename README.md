@@ -6,8 +6,6 @@ VSCode extension for replicating Grant Sanderson's `manim` workflow for Sublime 
 
 ## Example usage
 
-After installing:
-
 1. [Install manimgl](https://3b1b.github.io/manim/getting_started/installation.html), make sure that the command `manimgl` works in your terminal
 2. Open your manim file (e.g. `scene.py`) in VSCode
 3. Place your cursor where you want to start the scene, on a line of code within the `construct` method in a scene class
