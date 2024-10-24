@@ -30,6 +30,21 @@
         "command": "manim-notebook.previewSelection",
         "title": "Preview selected Manim code",
         "category": "Manim Notebook"
+      },
+      {
+        "command": "manim-notebook.startScene",
+        "title": "Start scene at cursor",
+        "category": "Manim Notebook"
+      },
+      {
+        "command": "manim-notebook.exitScene",
+        "title": "Quit preview",
+        "category": "Manim Notebook"
+      },
+      {
+        "command": "manim-notebook.clearScene",
+        "title": "Remove all objects from scene",
+        "category": "Manim Notebook"
       }
     ],
     "keybindings": [
@@ -44,6 +59,22 @@
         "key": "ctrl+' ctrl+r",
         "mac": "cmd+' cmd+r",
         "when": "(editorTextFocus || terminalFocus) && editorLangId == 'python'"
+      },
+      {
+        "command": "manim-notebook.startScene",
+        "key": "ctrl+' ctrl+s",
+        "mac": "cmd+' cmd+s",
+        "when": "(editorTextFocus || terminalFocus) && editorLangId == 'python'"
+      },
+      {
+        "command": "manim-notebook.exitScene",
+        "key": "ctrl+' ctrl+w",
+        "mac": "cmd+' cmd+w"
+      },
+      {
+        "command": "manim-notebook.clearScene",
+        "key": "ctrl+' ctrl+c",
+        "mac": "cmd+' cmd+c"
       }
     ],
     "configuration": {

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { window } from 'vscode';
+import { executeTerminalCommand } from './executeTerminalCommand';
 
 const PREVIEW_COMMAND = `\x0C checkpoint_paste()\x1b`;
 // \x0C: is Ctrl + L
@@ -46,15 +47,7 @@ export async function previewCode(code: string): Promise<void> {
         const clipboardBuffer = await vscode.env.clipboard.readText();
         await vscode.env.clipboard.writeText(code);
 
-        // Send command to interactive IPython shell
-        // See the new Terminal shell integration API (from VSCode release 1.93)
-        // https://code.visualstudio.com/updates/v1_93#_terminal-shell-integration-api
-        const terminal = vscode.window.activeTerminal || vscode.window.createTerminal();
-        if (terminal.shellIntegration) {
-            terminal.shellIntegration.executeCommand(PREVIEW_COMMAND);
-        } else {
-            terminal.sendText(PREVIEW_COMMAND);
-        }
+        executeTerminalCommand(PREVIEW_COMMAND);
 
         // Restore original clipboard content
         const timeout = vscode.workspace.getConfiguration("manim-notebook").clipboardTimeout;
