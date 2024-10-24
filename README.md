@@ -29,6 +29,8 @@ Then you can do either:
 
 <br /><br />
 
+## Keybord shortcuts
+
 You can use the default keyboard shortcuts for these commands, or assign your own.  
 
 - the default shortcuts all start with `cmd+'`
@@ -51,6 +53,8 @@ All current commands are:
 
 <br /><br />
 
+## Demonstration
+
 The resulting workflow can look like Grant's 🥳
 
 [(see demo on youtube)](https://www.youtube.com/watch?v=VaNHlFh0r5E)
@@ -59,6 +63,8 @@ The resulting workflow can look like Grant's 🥳
 
 
 <br /><br />
+
+## Contributing
 
 GitHub:  
 https://github.com/bhoov/manim-notebook
