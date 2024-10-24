@@ -22,8 +22,6 @@ Then you can do either:
     Clicking on one will run it.  
     It is equivalent to: `cmd+shift+p` -> `Manim Notebook: Preview active Manim Cell`
 
-<br />
-
 - Place your cursor on some line (or highlight several lines),  
     `cmd+shift+p` -> `Manim Notebook: Preview selected Manim code`  
     This will run the selected lines.
@@ -60,38 +58,3 @@ The resulting workflow can look like Grant's 🥳
 <iframe width="560" height="315" src="https://www.youtube.com/embed/VaNHlFh0r5E?si=ClVdBSI1k_-mzKFr" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
-
-<br /><br />
-
-## Local Development
-
-Prerequisite: install `vsce` (`npm i -g vsce`)
-
-**Install locally**
-
-After making changes:
-
-1. Bump the version in `package.json`
-2. `vsce package` (select `y`; a `.vsix` file will be created) 
-3. `cmd+shift+p` -> "Extensions: Install from VSIX" > select the `.vsix` file
-4. reload window
-
-<br />
-
----
-
-[Alternative](https://code.visualstudio.com/api/get-started/your-first-extension):
-
-- open `src/extension.ts`
-- to run the extension in a new window: `F5`  
-    (or: `cmd+shift+d` -> `Run Extension`)  
-    (or: `cmd+shift+p` -> `Debug: Start Debugging`)
-- after extension code changes: in that opened window: `cmd+shift+p` -> `Reload Window`
-
-<br />
-
----
-
-To publish, bump the version in `package.json` and 
-
-`vsce publish`
