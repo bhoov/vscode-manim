@@ -33,17 +33,17 @@
       },
       {
         "command": "manim-notebook.startScene",
-        "title": "Start the scene (in the state between the cursor's and the next line)",
+        "title": "Start scene at cursor",
         "category": "Manim Notebook"
       },
       {
         "command": "manim-notebook.exitScene",
-        "title": "Close the animation window and the IPython terminal",
+        "title": "Quit preview",
         "category": "Manim Notebook"
       },
       {
         "command": "manim-notebook.clearScene",
-        "title": "Remove all objects from the current scene",
+        "title": "Remove all objects from scene",
         "category": "Manim Notebook"
       }
     ],

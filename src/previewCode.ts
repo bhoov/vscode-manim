@@ -47,7 +47,6 @@ export async function previewCode(code: string): Promise<void> {
         const clipboardBuffer = await vscode.env.clipboard.readText();
         await vscode.env.clipboard.writeText(code);
 
-        // Send command to interactive IPython shell
         executeTerminalCommand(PREVIEW_COMMAND);
 
         // Restore original clipboard content

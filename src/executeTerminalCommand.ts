@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 /**
- * Execute the given command in the VSCode terminal:
+ * Executes the given command in the VSCode terminal:
  * - either using shell integration (if supported),
  * - otherwise using `sendText`.
  * 

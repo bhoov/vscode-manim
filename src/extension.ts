@@ -47,13 +47,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() { }
 
-
-
-
-// --------------------------------- Helpers: ---------------------------------
-
 /**
- * Command to preview the Manim code of the cell where the cursor is placed
+ * Previews the Manim code of the cell where the cursor is placed
  * (when accessed via the command pallette) or the code of the cell where
  * the codelens was clicked.
  */
@@ -82,7 +77,7 @@ function previewManimCell(cellCode: string | undefined) {
 }
 
 /**
- * Command to preview the Manim code of the selected text.
+ * Previews the Manim code of the selected text.
  */
 function previewSelection() {
 	const editor = vscode.window.activeTextEditor;
@@ -116,13 +111,14 @@ function previewSelection() {
 
 /**
  * Runs the `manimgl` command in the terminal, with the current cursor's line number:
- * manimgl <file_name> <ClassName> [-se <line_number>]
+ * manimgl <file_name> <ClassName> [-se <lineNumber>]
  * 
- * Notes:
- * - it saves the active file
- * - it loads the scene in the state it would be BETWEEN the cursor's line and the next line
- * - if the cursor is on a class definition line, `-se <line_number>` is NOT added (i.e. it loads the whole scene)
- * - (3b1b's version also copied this command to the clipboard with additional args `--prerun --finder -w`)
+ * - Saves the active file.
+ * - Previews the scene at the cursor's line (end of line)
+ * - If the cursor is on a class definition line, then `-se <lineNumber>`
+ *   is NOT added, i.e. the whole scene is previewed.
+ * - (3b1b's version also copies this command to the clipboard with additional
+ *   args `--prerun --finder -w`. We don't do that here.)
  */
 async function startScene() {
 	const editor = vscode.window.activeTextEditor;
@@ -133,53 +129,50 @@ async function startScene() {
 		return;
 	}
 
-	// Save the active file:
+	// Save active file
 	vscode.commands.executeCommand('workbench.action.files.save');
 
-	// Just in case:
 	const languageId = editor.document.languageId;
 	if (languageId !== 'python') {
-		vscode.window.showErrorMessage('File must be in Python');
+		vscode.window.showErrorMessage("You don't have a Python file open.");
 		return;
 	}
 
-	const contents = editor.document.getText();
-	const all_lines = contents.split("\n");
+	const lines = editor.document.getText().split("\n");
 
 	// Find which lines define classes
-	// E.g. here, class_lines = [{ line: "class FirstScene(Scene):", index: 3 }, ...]
-	const class_lines = all_lines
+	// E.g. here, classLines = [{ line: "class FirstScene(Scene):", index: 3 }, ...]
+	const classLines = lines
 		.map((line, index) => ({ line, index }))
 		.filter(({ line }) => /^class (.+?)\((.+?)\):/.test(line));
 
-	// Where the cursor is (row = line)
-	const row = editor.selection.start.line;
+	const cursorLine = editor.selection.start.line;
 
 	// Find the first class defined before where the cursor is
-	// E.g. here, matching_class = { line: "class SelectedScene(Scene):", index: 42 }
-	const matching_class = class_lines
+	// E.g. here, matchingClass = { line: "class SelectedScene(Scene):", index: 42 }
+	const matchingClass = classLines
 		.reverse()
-		.find(({ index }) => index <= row);
-	if (!matching_class) {
-		vscode.window.showErrorMessage('No class found for the cursor position.');
+		.find(({ index }) => index <= cursorLine);
+	if (!matchingClass) {
+		vscode.window.showErrorMessage('Place your cursor in Manim code inside a class.');
 		return;
 	}
-	// E.g. here, scene_name = "SelectedScene"
-	const scene_name = matching_class.line.slice("class ".length, matching_class.line.indexOf("("));
+	// E.g. here, sceneName = "SelectedScene"
+	const sceneName = matchingClass.line.slice("class ".length, matchingClass.line.indexOf("("));
 
 	// While line is empty - make it the previous line
-	// (because `manimgl -se <line_number>` doesn't work on empty lines)
-	let line_number = row;
-	while (all_lines[line_number].trim() === "") {
-		line_number--;
+	// (because `manimgl -se <lineNumber>` doesn't work on empty lines)
+	let lineNumber = cursorLine;
+	while (lines[lineNumber].trim() === "") {
+		lineNumber--;
 	}
 
 	// Create the command
-	const file_path = editor.document.fileName;  // absolute path
-	const cmds = ["manimgl", file_path, scene_name];
+	const filePath = editor.document.fileName;  // absolute path
+	const cmds = ["manimgl", filePath, sceneName];
 	let enter = false;
-	if (row !== matching_class.index) {
-		cmds.push(`-se ${line_number + 1}`);
+	if (cursorLine !== matchingClass.index) {
+		cmds.push(`-se ${lineNumber + 1}`);
 		enter = true;
 	}
 	const command = cmds.join(" ");
@@ -209,16 +202,16 @@ async function startScene() {
 }
 
 /**
- * Runs the `exit()` command in the terminal.
- * It closes the animation window and the IPython terminal.
+ * Runs the `exit()` command in the terminal to close the animation window
+ * and the IPython terminal.
  */
 function exitScene() {
 	executeTerminalCommand("exit()");
 }
 
 /**
- * Runs the `clear()` command in the terminal.
- * It removes all objects from the scene.
+ * Runs the `clear()` command in the terminal to remove all objects from
+ * the scene.
  */
 function clearScene() {
 	executeTerminalCommand("clear()");
